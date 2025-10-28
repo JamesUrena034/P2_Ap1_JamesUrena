@@ -1,10 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using P2_Ap1_JamesUrena.Components;
+using P2_Ap1_JamesUrena.DAL;
+using P2_Ap1_JamesUrena.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("SqlConnection");
+builder.Services.AddDbContextFactory<Contexto>(options => options.UseSqlite(ConStr));
+builder.Services.AddScoped<RegistroServices>();
 
 var app = builder.Build();
 
