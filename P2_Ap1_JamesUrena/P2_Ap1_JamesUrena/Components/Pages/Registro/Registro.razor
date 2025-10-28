@@ -1,0 +1,31 @@
+﻿@page "/Registro/Index"
+@using P2_Ap1_JamesUrena.Services
+
+@inject RegistroServices registroService
+
+<PageTitle> Registro</PageTitle>
+
+<div class="container">
+	<div class="card shadow-lg">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<h5 class="card-title m-0">Registro</h5>
+			<a href="/Registro/Create" class="btn btn-primary">
+				<span class="bi bi-plus-square"></span> Crear
+				</a>
+		</div>
+
+		<div class="card-body">
+			<div class="row mb-3">
+				<div class="col-3">
+					<label class="form-label"><strong>Desde</strong></label>
+					@*<InputDate class="form-control" @bind-Value="desde" />*@
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@code {
+
+}
