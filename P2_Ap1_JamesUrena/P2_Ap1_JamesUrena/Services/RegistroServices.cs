@@ -7,7 +7,7 @@ namespace P2_Ap1_JamesUrena.Services;
 
 public class RegistroServices(IDbContextFactory<Contexto> DbFactory)
 {
-    public async Task<List<Registros>> GetList(Expression<Func<Registros, bool>> criterio)
+    public async Task<List<Pedidos>> GetList(Expression<Func<Pedidos, bool>> criterio)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Registros
