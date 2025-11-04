@@ -11,7 +11,7 @@ builder.Services.AddRazorComponents()
 
 var ConStr = builder.Configuration.GetConnectionString("SqlConnection");
 builder.Services.AddDbContextFactory<Contexto>(options => options.UseSqlite(ConStr));
-builder.Services.AddScoped<RegistroServices>();
+builder.Services.AddScoped<PedidosServices>();
 
 var app = builder.Build();
 

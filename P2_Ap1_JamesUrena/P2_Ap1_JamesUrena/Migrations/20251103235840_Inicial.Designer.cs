@@ -11,8 +11,8 @@ using P2_Ap1_JamesUrena.DAL;
 namespace P2_Ap1_JamesUrena.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20251103230453_Incial")]
-    partial class Incial
+    [Migration("20251103235840_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,8 +33,8 @@ namespace P2_Ap1_JamesUrena.Migrations
                     b.Property<int>("Existencia")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Precio")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
 
                     b.HasKey("ComponenteId");
 
@@ -46,27 +46,27 @@ namespace P2_Ap1_JamesUrena.Migrations
                             ComponenteId = 1,
                             Descripcion = "Memoria 4GB",
                             Existencia = 1,
-                            Precio = 1580m
+                            Precio = 1580.0
                         },
                         new
                         {
                             ComponenteId = 2,
                             Descripcion = "Disco SSD 120MB",
                             Existencia = 8,
-                            Precio = 4200m
+                            Precio = 4200.0
                         },
                         new
                         {
                             ComponenteId = 3,
                             Descripcion = "Tarjeta de Video",
                             Existencia = 4,
-                            Precio = 10000m
+                            Precio = 10000.0
                         });
                 });
 
-            modelBuilder.Entity("P2_Ap1_JamesUrena.Models.PedidoDetalle", b =>
+            modelBuilder.Entity("P2_Ap1_JamesUrena.Models.PedidoDetalles", b =>
                 {
-                    b.Property<int>("PedidoId")
+                    b.Property<int>("DetalleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -76,10 +76,17 @@ namespace P2_Ap1_JamesUrena.Migrations
                     b.Property<int>("ComponenteId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("PedidoId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double>("Precio")
                         .HasColumnType("REAL");
 
-                    b.HasKey("PedidoId");
+                    b.HasKey("DetalleId");
+
+                    b.HasIndex("ComponenteId");
+
+                    b.HasIndex("PedidoId");
 
                     b.ToTable("PedidoDetalles");
                 });
@@ -103,6 +110,35 @@ namespace P2_Ap1_JamesUrena.Migrations
                     b.HasKey("PedidoId");
 
                     b.ToTable("Registros");
+                });
+
+            modelBuilder.Entity("P2_Ap1_JamesUrena.Models.PedidoDetalles", b =>
+                {
+                    b.HasOne("P2_Ap1_JamesUrena.Models.Componente", "Componente")
+                        .WithMany("PedidoDetalles")
+                        .HasForeignKey("ComponenteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("P2_Ap1_JamesUrena.Models.Pedidos", "Pedido")
+                        .WithMany("PedidoDetalles")
+                        .HasForeignKey("PedidoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Componente");
+
+                    b.Navigation("Pedido");
+                });
+
+            modelBuilder.Entity("P2_Ap1_JamesUrena.Models.Componente", b =>
+                {
+                    b.Navigation("PedidoDetalles");
+                });
+
+            modelBuilder.Entity("P2_Ap1_JamesUrena.Models.Pedidos", b =>
+                {
+                    b.Navigation("PedidoDetalles");
                 });
 #pragma warning restore 612, 618
         }

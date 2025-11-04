@@ -1,0 +1,101 @@
+﻿@page "/Pedidos/Index"
+@inject NavigationManager navigationManager
+@inject PedidosServices pedidosService
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Pedidos</PageTitle>
+
+<div class="container">
+	<div class="card shadow-lg">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<h1 class="card-title"><strong>Registro Pedidos</strong></h1>
+			<a href="/Pedidos/Create" class="btn btn-primary bi bi-plus-square"> Crear</a>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-2">
+					<label class="col-form-label"><strong>Desde:</strong></label>
+					<InputDate class="form-control" @bind-Value="FechaDesde"></InputDate>
+				</div>
+
+				<div class="col-md-2">
+					<label class="col-form-label"><strong>Hasta:</strong></label>
+					<InputDate class="form-control" @bind-Value="Fechahasta"></InputDate>
+				</div>
+
+				<div class="col-md-3">
+					<label class="form-label"><strong>Cliente</strong></label>
+					<InputText class="form-control" @bind-Value="Filtrar"></InputText>
+				</div>
+
+				<div class="col-md-3 d-flex align-items-end">
+					<button class="btn btn-success bi bi-search me-2" @onclick="Buscar"> Buscar</button>
+					<button class="btn btn-secondary bi bi-arrow-clockwise" @onclick="Restablecer"></button>
+				</div>
+			</div>
+
+			<div class="table-responsive mt-4">
+				<table class="table table-bordered table-hover align-middle">
+					<thead class="table-light text-center">
+						<tr>
+							<th>PedidoId</th>
+							<th>Fecha</th>
+							<th>Cliente</th>
+							<th>Total</th>
+							<th>Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var pedido in ListaPedidos)
+						{
+							<tr>
+								<td>@pedido.PedidoId</td>
+								<td>@pedido.Fecha.ToShortDateString()</td>
+								<td>@pedido.NombreCliente</td>
+								<td>@pedido.Total.ToString("N2")</td>
+								<td class="text-center">
+									<a href="/Pedidos/Edit/@pedido.PedidoId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="card-footer d-flex justify-content-between">
+			<label><strong>Total de pedidos:</strong> @ListaPedidos.Count</label>
+			<label><strong>Total general:</strong> @ListaPedidos.Sum(p => p.Total).ToString("N2")</label>
+		</div>
+	</div>
+</div>
+
+@code {
+	private List<Pedidos> ListaPedidos { get; set; } = new();
+	private DateTime? FechaDesde { get; set; }
+	private DateTime? Fechahasta { get; set; }
+	private string Filtrar { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		ListaPedidos = await pedidosService.GetList(p => p.PedidoId > 0);
+	}
+
+	private async Task Buscar()
+	{
+		ListaPedidos = await pedidosService.GetList(p =>
+			(string.IsNullOrWhiteSpace(Filtrar) || p.NombreCliente.ToLower().Contains(Filtrar.ToLower())) &&
+			(FechaDesde == null || p.Fecha.Date >= FechaDesde.Value.Date) &&
+			(Fechahasta == null || p.Fecha.Date <= Fechahasta.Value.Date)
+		);
+	}
+
+	private async Task Restablecer()
+	{
+		FechaDesde = null;
+		Fechahasta = null;
+		Filtrar = string.Empty;
+		ListaPedidos = await pedidosService.GetList(p => p.PedidoId > 0);
+	}
+}
